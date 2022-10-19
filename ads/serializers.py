@@ -3,6 +3,12 @@ from rest_framework import serializers
 from ads.models import Ad, Selection
 
 
+class ValidatorTrue:
+    def __call__(self, value):
+        if value:
+            raise serializers.ValidationError("Ad published can not be True")
+
+
 class AdSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ad
@@ -18,6 +24,14 @@ class AdDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ad
         fields = ["id", "name", "author_id", "author", "price", "description", "is_published", "category_id", "image"]
+
+
+class AdCreateSerializer(serializers.ModelSerializer):
+    is_published = serializers.BooleanField(validators=[ValidatorTrue()])
+
+    class Meta:
+        model = Ad
+        fields = '__all__'
 
 
 class SelectionSerializer(serializers.ModelSerializer):
